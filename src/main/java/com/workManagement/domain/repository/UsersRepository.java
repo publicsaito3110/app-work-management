@@ -11,7 +11,20 @@ import com.workManagement.domain.model.entity.key.PkUsersEntity;
  *
  */
 @Repository
-public interface UsersRepository extends BaseRepository<UsersEntity, PkUsersEntity>{
+public interface UsersRepository extends BaseRepository<UsersEntity, PkUsersEntity> {
+
+
+	/**
+	 * [Repository] ユーザ検索処理
+	 *
+	 * ユーザIDと一致するユーザを取得する<br>
+	 * ただし、一致するユーザーがいない場合はnullとなる
+	 *
+	 * @param id 取得したいユーザのユーザID
+	 * @return UsersEntity ユーザ情報
+	 */
+	@Query(value = "SELECT u.* FROM users u WHERE u.id = :id", nativeQuery = true)
+	public UsersEntity selectUsers(String id);
 
 
 	/**
@@ -24,6 +37,6 @@ public interface UsersRepository extends BaseRepository<UsersEntity, PkUsersEnti
 	 * @param email 取得したいユーザのメールアドレス
 	 * @return UsersEntity ユーザ情報
 	 */
-	@Query(value = "SELECT u.* FROM users u WHERE u.id = :userId OR u.email = :email;", nativeQuery = true)
+	@Query(value = "SELECT u.* FROM users u WHERE u.id = :id OR u.email = :email", nativeQuery = true)
 	public UsersEntity selectUsers(String id, String email);
 }
