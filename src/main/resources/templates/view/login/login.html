@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ログイン</title>
+<th:block th:insert="~{common/import-css :: fragment}"></th:block>
+<link href="/css/common/cmn-login.css" rel="stylesheet">
+</head>
+<body>
+	<div class="container">
+		<div class="parents">
+			<div class="card card-container">
+				<h3 class="profile-title">ログイン</h3>
+				<img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+				<p id="profile-name" class="profile-name-card"></p>
+				<form th:action="@{/login}" method="post" class="form-signin">
+					<div th:if="${param.error}" class="alert alert-danger">IDまたはパスワードが違います</div>
+					<div th:if="${isAlertLoginFailed}" th:text="${errorMassage}" class="alert alert-danger"></div>
+					<span id="reauth-email" class="reauth-email"></span>
+					<input type="text" name="username" id="inputEmail" class="form-control" placeholder="User id" required autofocus>
+					<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+					<button class="btn btn-lg btn-primary text-light btn-block btn-signin" type="submit">ログイン</button>
+				</form>
+				<p class="mb-1">
+					<a href="/login/forgot-id" class="forgot-password">ユーザーIDをお忘れですか? </a>
+				</p>
+				<a href="/login/forgot-password" class="forgot-password">パスワードをお忘れですか? </a>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
