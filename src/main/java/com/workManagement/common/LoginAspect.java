@@ -32,13 +32,12 @@ public class LoginAspect {
      * <p>
      * Controller実行前にセッション及びURI制限を行う<br>
      * セッションが未保持のとき、<br>
-     *   ・セッションの未保持が許容されていないURI: ログイン画面へ強制的に遷移<br>
-     *   ・セッションの未保持が許容されているURI: そのまま実行<br>
-     *   ・存在しないURI: 404ページへ遷移<br>
+     * 　・セッションの未保持が許容されていないURI: ログイン画面へ強制的に遷移<br>
+     * 　・セッションの未保持が許容されているURI: そのまま実行<br>
+     * 　・存在しないURI: 404ページへ遷移<br>
      * セッションが保持されているとき、<br>
-     *   ・ログイン関連のURI: 強制的にホーム画面へ遷移<br>
-     *   ・ログイン関連以外のURI: そのまま実行
-     * </p>
+     * 　・ログイン関連のURI: 強制的にホーム画面へ遷移<br>
+     * 　・ログイン関連以外のURI: そのまま実行
      *
      * @param joinPoint ProceedingJoinPoint
      * @return Object
@@ -71,7 +70,7 @@ public class LoginAspect {
 			String patternSessionIgnoreUri =  "/|/logout|/error|/login|^/login/.*$";
 
 			// 現在のURIがセッション未保持を許容するURIに含まれていないとき、ログイン画面へ強制的に遷移
-			if (commonLogic.isSuccessValidation(nowUri, patternSessionIgnoreUri)) {
+			if (!commonLogic.isSuccessValidation(nowUri, patternSessionIgnoreUri)) {
 				return "redirect:/login/error";
 			}
 
@@ -79,10 +78,10 @@ public class LoginAspect {
 			return joinPoint.proceed();
 		}
 
-		//ログインに関するURI
+		// ログインに関するURI
 		String patternLoginUri = "/login|^/login/.*$";
 
-		//ログインに関するURIのとき、ホーム画面へ強制的に遷移
+		// ログインに関するURIのとき、ホーム画面へ強制的に遷移
 		if (commonLogic.isSuccessValidation(nowUri, patternLoginUri)) {
 			return "redirect:/home";
 		}
