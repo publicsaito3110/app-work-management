@@ -59,6 +59,7 @@ public class SecurityConfig {
 
 			// static内のアクセスを許容するパス
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+			.requestMatchers("/img/**").permitAll()
 		);
 		return httpSecurity.build();
 	}
