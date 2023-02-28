@@ -1,4 +1,4 @@
-package com.workManagement.common;
+package com.workManagement.common.logic;
 
 /**
  * @author saito

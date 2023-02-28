@@ -1,7 +1,7 @@
 package com.workManagement.domain.model.entity;
 
-import com.workManagement.common.CommonLogic;
 import com.workManagement.common.Const;
+import com.workManagement.common.logic.CommonLogic;
 import com.workManagement.domain.model.entity.key.PkUsersEntity;
 
 import jakarta.persistence.Column;

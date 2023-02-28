@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.workManagement.common.logic.CommonLogic;
 import com.workManagement.domain.model.bean.collection.AccountBean;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -78,7 +79,7 @@ public class LoginAspect {
 			return joinPoint.proceed();
 		}
 
-		// ログインに関するURI
+		// ログイン、新規ユーザ登録に関するURI
 		String patternLoginUri = "/login|^/login/.*$";
 
 		// ログインに関するURIのとき、ホーム画面へ強制的に遷移

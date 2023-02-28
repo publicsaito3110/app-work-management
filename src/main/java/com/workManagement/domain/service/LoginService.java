@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.workManagement.common.CommonLogic;
 import com.workManagement.common.Const;
 import com.workManagement.domain.model.bean.LoginAuthBean;
 import com.workManagement.domain.model.bean.collection.AccountBean;
@@ -101,7 +100,7 @@ public class LoginService extends BaseService {
 		}
 
 		// 退職済みユーザだったとき
-		if (new CommonLogic().isSuccessValidation(usersEntity.getDelFlg(), Const.PATTERN_USERS_DEL_FLG)) {
+		if (usersEntity.delFlgFormatTF()) {
 
 			// フィールドにセットし、falseを返す
 			errorMassage = "このユーザーは現在ログインできません";
