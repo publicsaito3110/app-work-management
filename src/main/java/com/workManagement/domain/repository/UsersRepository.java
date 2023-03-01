@@ -4,14 +4,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.workManagement.domain.model.entity.UsersEntity;
-import com.workManagement.domain.model.entity.key.PkUsersEntity;
 
 /**
  * @author saito
  *
  */
 @Repository
-public interface UsersRepository extends BaseRepository<UsersEntity, PkUsersEntity> {
+public interface UsersRepository extends BaseRepository<UsersEntity, String> {
 
 
 	/**

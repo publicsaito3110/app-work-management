@@ -2,12 +2,10 @@ package com.workManagement.domain.model.entity;
 
 import com.workManagement.common.Const;
 import com.workManagement.common.logic.CommonLogic;
-import com.workManagement.domain.model.entity.key.PkUsersEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,51 +15,46 @@ import lombok.EqualsAndHashCode;
  *
  */
 @Entity
-@Table(name="users")
-@IdClass(PkUsersEntity.class)
+@Table(name="user")
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UsersEntity extends BaseEntity {
 
 	@Id
-	@Column(name="id")
+	@Column(name = "id")
 	private String id;
 
-	@Id
-	@Column(name="email")
-	private String email;
-
-	@Column(name="office")
-	private String office;
-
-	@Column(name="name")
+	@Column(name = "name")
 	private String name;
 
-	@Column(name="nameKana")
+	@Column(name = "nameKana")
 	private String nameKana;
 
-	@Column(name="gender")
+	@Column(name = "gender")
 	private String gender;
 
-	@Column(name="password")
+	@Column(name = "password")
 	private String password;
 
-	@Column(name="address")
+	@Column(name = "address")
 	private String address;
 
-	@Column(name="tel")
+	@Column(name = "tel")
 	private String tel;
 
-	@Column(name="note")
+	@Column(name = "email")
+	private String email;
+
+	@Column(name = "note")
 	private String note;
 
-	@Column(name="icon_kbn")
+	@Column(name = "icon_kbn")
 	private String iconKbn;
 
-	@Column(name="admin_flg")
+	@Column(name = "admin_flg")
 	private String adminFlg;
 
-	@Column(name="del_flg")
+	@Column(name = "del_flg")
 	private String delFlg;
 
 
