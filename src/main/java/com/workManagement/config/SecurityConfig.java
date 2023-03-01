@@ -3,7 +3,9 @@ package com.workManagement.config;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -13,6 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  */
 @Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
 
@@ -43,23 +47,24 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.formLogin(login -> login
 
-			// ログイン画面のURL
+			// ログイン画面のURI
 			.loginProcessingUrl("/login")
 			.loginPage("/login")
-			// ログイン成功時のURL
+			// ログイン成功時のURI
 			.defaultSuccessUrl("/login/auth")
-			// ログイン失敗時のURL
+			// ログイン失敗時のURI
 			.failureUrl("/login?error")
 			.permitAll()
-
 		).logout(logout -> logout
-			// ログアウト時のURL
+
+			// ログアウト時のURI
 			.logoutSuccessUrl("/logout")
 		).authorizeHttpRequests(authz -> authz
 
+			// 未ログイン時のアクセス可能なURI
+			.requestMatchers("/**").permitAll()
 			// static内のアクセスを許容するパス
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-			.requestMatchers("/img/**").permitAll()
 		);
 		return httpSecurity.build();
 	}
