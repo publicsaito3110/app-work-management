@@ -43,7 +43,7 @@ public class CmnScheduleCalendarService extends BaseService {
 		cmnScheduleCalendarBean.setLastDateYmd(lastDateYmd);
 		cmnScheduleCalendarBean.setCalendarList(calendarList);
 		cmnScheduleCalendarBean.setNowYm(nowNextBeforeYmArray[0]);
-		cmnScheduleCalendarBean.setNextYm(nowNextBeforeYmArray[1]);
+		cmnScheduleCalendarBean.setAfterYm(nowNextBeforeYmArray[1]);
 		cmnScheduleCalendarBean.setBeforeYm(nowNextBeforeYmArray[2]);
 		return cmnScheduleCalendarBean;
 	}
@@ -87,8 +87,8 @@ public class CmnScheduleCalendarService extends BaseService {
 		String afterYm = commonLogic.changeYm(afterYear, afterMonth);
 
 		// それぞれの年月を配列に格納し、返す
-		String[] nowNextBeforeYmArray = {nowYm, afterYm, beforeYm};
-		return nowNextBeforeYmArray;
+		String[] nowAfterBeforeYmArray = {nowYm, afterYm, beforeYm};
+		return nowAfterBeforeYmArray;
 	}
 
 
