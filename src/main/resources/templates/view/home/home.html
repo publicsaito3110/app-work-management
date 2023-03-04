@@ -1,0 +1,92 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>ホーム</title>
+<th:block th:insert="~{common/import-css :: fragment}"></th:block>
+<link href="/css/common/calendar-content.css" rel="stylesheet">
+<link href="/css/common/spacing.css" rel="stylesheet">
+<link href="/css/common/schedule-color.css" rel="stylesheet">
+</head>
+<body>
+	<div th:insert="common/header"></div>
+	<div class="container">
+		<h1 th:text="${bean.year} + '年' + ${bean.month} + '月'" class="text-center m-0"></h1>
+		<h5 class="text-center">
+			<span class="badge bg-info text-black-50">あなたのシフト</span>
+		</h5>
+		<div class="select-month-wrap">
+			<a class="btn btn-success" th:href="'/home?ym=' + ${bean.beforeYm}"><i class="bi bi-caret-left"></i> 前月</a>
+			<a class="btn btn-success" th:href="'/home?ym=' + ${bean.afterYm}"> 翌月 <i class="bi bi-caret-right"></i></a>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-bordered calendar-table">
+				<thead class="table-info text-center fs-5">
+					<tr>
+						<th class="calendar-sunday">日</th>
+						<th>月</th>
+						<th>火</th>
+						<th>水</th>
+						<th>木</th>
+						<th>金</th>
+						<th class="calendar-sattday">土</th>
+					</tr>
+				</thead>
+				<tbody class="table-light">
+					<th:block th:each="calendar, calendarStatus: ${bean.calendarList}">
+						<th:block th:if="${calendarStatus.count % 7 == 1}">
+							<tr>
+						</th:block>
+						<td class="width-100 height-110 p-0">
+							<div th:if="${calendar != null}">
+								<p th:if="${calendarStatus.count % 7 == 1}" th:text="${calendar}" class="calendar-sunday pt-1 ms-1 mb-3"></p>
+								<p th:if="${calendarStatus.count % 7 == 0}" th:text="${calendar}" class="calendar-sattday pt-1 ms-1 mb-3"></p>
+								<p th:if="${calendarStatus.count % 7 != 1 && calendarStatus.count % 7 != 0}" th:text="${calendar}" class="pt-1 ms-1 mb-3"></p>
+								<div class="text-center text-break">
+									<i th:each="scheduleTime, scheduleTimeStatus: ${bean.scheduleTimeEntity.scheduleTimeFormatList}" th:if="${bean.isScheduleRecordedArray[__${calendar - 1}__][__${scheduleTimeStatus.count - 1}__]}" th:class="${scheduleTimeHtmlClassColorArray[__${scheduleTimeStatus.count - 1}__]} + ' bi bi-circle-fill'"></i>
+								</div>
+							</div>
+						</td>
+						<th:block th:if="${calendarStatus.count % 7 == 0}">
+							</tr>
+						</th:block>
+					</th:block>
+				</tbody>
+			</table>
+		</div>
+		<div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+			<a th:href="'/home/all?ym=' + ${bean.nowYm} " class="btn btn-outline-primary">全体シフト</a>
+			<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#scheduleTimeModal">シフト詳細</button>
+		</div>
+	</div>
+	<!-- スケジュール時間詳細モーダル -->
+	<div class="modal fade" id="scheduleTimeModal" tabindex="-1" aria-labelledby="exampleModalLiveLabel" style="display: none;" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modal-news-title">シフト時間</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<ul class="list-group">
+						<li class="list-group-item list-group-item-dark">
+							<p class="row m-0">
+								<span class="col-5">名前</span>
+								<span class="col-5">勤務時間</span>
+								<span class="col-2">休憩</span>
+							</p>
+						</li>
+						<li th:each="scheduleTime, status: ${bean.scheduleTimeEntity.scheduleTimeFormatList}" th:class="${htmlBgColorArray[__${status.count - 1}__]} + ' list-group-item'">
+							<p class="row m-0">
+								<span th:text="${scheduleTime.name}" class="col-5"></span>
+								<span th:text="${scheduleTime.startHmFormatTime} + '～' + ${scheduleTime.endHmFormatTime}" class="col-5"></span>
+								<span th:text="${scheduleTime.restHmFormatTime}" class="col-2"></span>
+							</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
