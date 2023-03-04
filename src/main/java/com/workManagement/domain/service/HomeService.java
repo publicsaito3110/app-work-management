@@ -9,12 +9,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.workManagement.common.Const;
 import com.workManagement.common.logic.CmnScheduleLogic;
 import com.workManagement.domain.model.bean.CmnScheduleCalendarBean;
+import com.workManagement.domain.model.bean.CmnScheduleUserNameBean;
+import com.workManagement.domain.model.bean.HomeAllBean;
 import com.workManagement.domain.model.bean.HomeBean;
 import com.workManagement.domain.model.entity.ScheduleEntity;
 import com.workManagement.domain.model.entity.ScheduleTimeEntity;
 import com.workManagement.domain.repository.ScheduleRepository;
 import com.workManagement.domain.repository.ScheduleTimeRepository;
 import com.workManagement.domain.service.common.CmnScheduleCalendarService;
+import com.workManagement.domain.service.common.CmnScheduleUserNameService;
 
 /**
  * @author saito
@@ -32,6 +35,9 @@ public class HomeService extends BaseService {
 
 	@Autowired
 	private CmnScheduleCalendarService cmnScheduleCalendarService;
+
+	@Autowired
+	private CmnScheduleUserNameService cmnScheduleUserNameService;
 
 
 	/**
@@ -63,6 +69,33 @@ public class HomeService extends BaseService {
 		homeBean.setBeforeYm(cmnScheduleCalendarBean.getBeforeYm());
 		homeBean.setScheduleTimeEntity(scheduleTimeEntity);
 		return homeBean;
+	}
+
+
+	/**
+	 * [Service] 全体のスケジュール表示機能 (/home/all)
+	 *
+	 * @param ym 年月
+	 * @return HomeBean
+	 */
+	public HomeAllBean homeAll(String ym) {
+
+		// CmnScheduleCalendarServiceからカレンダー, 年月, 最終日を取得
+		CmnScheduleCalendarBean cmnScheduleCalendarBean = cmnScheduleCalendarService.generateCalendarYmByYm(ym);
+		// CmnScheduleUserNameServiceから2次元配列の確定スケジュール, スケジュール時間区分を取得
+		CmnScheduleUserNameBean cmnScheduleUserNameBean = cmnScheduleUserNameService.generateScheduleUserName(cmnScheduleCalendarBean.getYear(), cmnScheduleCalendarBean.getMonth(), cmnScheduleCalendarBean.getLastDateYmd());
+
+		// Beanにセット
+		HomeAllBean homeAllBean = new HomeAllBean();
+		homeAllBean.setYear(cmnScheduleCalendarBean.getYear());
+		homeAllBean.setMonth(cmnScheduleCalendarBean.getMonth());
+		homeAllBean.setNowYm(cmnScheduleCalendarBean.getNowYm());
+		homeAllBean.setCalendarList(cmnScheduleCalendarBean.getCalendarList());
+		homeAllBean.setAfterYm(cmnScheduleCalendarBean.getAfterYm());
+		homeAllBean.setBeforeYm(cmnScheduleCalendarBean.getBeforeYm());
+		homeAllBean.setScheduleUserNameArray(cmnScheduleUserNameBean.getScheduleUserNameArray());
+		homeAllBean.setScheduleTimeEntity(cmnScheduleUserNameBean.getScheduleTimeEntity());
+		return homeAllBean;
 	}
 
 
