@@ -1,0 +1,126 @@
+.purple {
+	color: #aa7bff;
+	border-color: #aa7bff;
+}
+.pink {
+	color: #ff75be;
+	border-color: #ff75be;
+}
+.orange {
+	color: #fd7e14;
+	border-color: #fd7e14;
+}
+.yellow {
+	color: #ffd96a;
+	border-color: #ffd96a;
+}
+.teal {
+	color: #20c997;
+	border-color: #20c997;
+}
+.cyan {
+	color: #0dcaf0;
+	border-color: #0dcaf0;
+}
+.gray {
+	color: #adb5bd;
+	border-color: #adb5bd;
+}
+.bg-purple {
+	color: #ffffff;
+	border-color: #aa7bff;
+	background-color: #aa7bff;
+}
+.bg-pink {
+	color: #ffffff;
+	border-color: #ff75be;
+	background-color: #ff75be;
+}
+.bg-orange {
+	color: #ffffff;
+	border-color: #fd7e14;
+	background-color: #fd7e14;
+}
+.bg-yellow {
+	color: #ffffff;
+	border-color: #ffd96a;
+	background-color: #ffd96a;
+}
+.bg-teal {
+	color: #ffffff;
+	border-color: #20c997;
+	background-color: #20c997;
+}
+.bg-cyan {
+	color: #ffffff;
+	border-color: #0dcaf0;
+	background-color: #0dcaf0;
+}
+.bg-gray {
+	color: #ffffff;
+	border-color: #adb5bd;
+	background-color: #adb5bd;
+}
+.btn-purple {
+	color: #aa7bff;
+	border-color: #aa7bff;
+	background-color: #ffffff;
+}
+.btn-purple:hover {
+	color: #ffffff;
+	background-color: #aa7bff;
+}
+.btn-pink {
+	color: #ff75be;
+	border-color: #ff75be;
+	background-color: #ffffff;
+}
+.btn-pink:hover {
+	color: #ffffff;
+	background-color: #ff75be;
+}
+.btn-orange {
+	color: #fd7e14;
+	border-color: #fd7e14;
+	background-color: #ffffff;
+}
+.btn-orange:hover {
+	color: #ffffff;
+	background-color: #fd7e14;
+}
+.btn-yellow {
+	color: #ffd96a;
+	border-color: #ffd96a;
+	background-color: #ffffff;
+}
+.btn-yellow:hover {
+	color: #ffffff;
+	background-color: #ffd96a;
+}
+.btn-teal {
+	color: #20c997;
+	border-color: #20c997;
+	background-color: #ffffff;
+}
+.btn-teal:hover {
+	color: #ffffff;
+	background-color: #20c997;
+}
+.btn-cyan {
+	color: #0dcaf0;
+	border-color: #0dcaf0;
+	background-color: #ffffff;
+}
+.btn-cyan:hover {
+	color: #ffffff;
+	background-color: #0dcaf0;
+}
+.btn-gray {
+	color: #adb5bd;
+	border-color: #adb5bd;
+	background-color: #ffffff;
+}
+.btn-gray:hover {
+	color: #ffffff;
+	background-color: #adb5bd;
+}

@@ -1,0 +1,10 @@
+.select-month-wrap {
+	display: flex;
+	justify-content: space-between;
+}
+.calendar-sunday {
+	color: orangered;
+ }
+.calendar-sattday {
+	color: #0000b6;
+}
