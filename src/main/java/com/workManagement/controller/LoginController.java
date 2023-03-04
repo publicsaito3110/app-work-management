@@ -65,9 +65,6 @@ public class LoginController extends BaseController {
 			// View
 			return "view/login/login";
 		}
-
-		// ログイン可能ユーザのとき、ホームへリダイレクト
-		model.addAttribute("isAlertLoginFailed", false);
 		// View
 		return "redirect:/home";
 	}

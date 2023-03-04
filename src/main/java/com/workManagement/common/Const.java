@@ -14,6 +14,7 @@ public class Const {
 	//-----------
 
 	public static final int SCHEDULE_RECORDABLE_MAX_DIVISION = 7;
+	public static final String SCHEDULE_RECORDED = "1";
 
 	//-------
     // その他

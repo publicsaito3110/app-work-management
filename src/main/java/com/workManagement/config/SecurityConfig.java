@@ -61,8 +61,6 @@ public class SecurityConfig {
 			.logoutSuccessUrl("/logout")
 		).authorizeHttpRequests(authz -> authz
 
-			// 未ログイン時のアクセス可能なURI
-			.requestMatchers("/**").permitAll()
 			// static内のアクセスを許容するパス
 			.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 		);

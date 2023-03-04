@@ -1,12 +1,13 @@
 package com.workManagement.domain.model.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import com.workManagement.common.Const;
 import com.workManagement.common.logic.CommonLogic;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

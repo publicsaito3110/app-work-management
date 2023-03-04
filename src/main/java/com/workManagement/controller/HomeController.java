@@ -21,7 +21,6 @@ public class HomeController extends BaseController {
 	@Autowired
 	private HomeService homeService;
 
-
 	/**
 	 * [Controller] ホーム画面表示機能 (/home)
 	 *
