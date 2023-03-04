@@ -28,6 +28,7 @@ public class Const {
 	public static final String ROLE_USERS_GENERAL = "ROLE_GENERAL";
 
 	// HTML
+	public static final String HTML_TAG_BR ="<br>";
 	public static final String[] HTML_CLASS_SCHEDULE_COLOR_ARRAY = {"teal", "orange", "pink", "yellow", "purple", "cyan", "gray"};
 	public static final String[] HTML_CLASS_SCHEDULE_BG_COLOR_ARRAY = {"bg-teal", "bg-orange", "bg-pink", "bg-yellow", "bg-purple", "bg-cyan", "bg-gray"};
 	public static final String[] HTML_CLASS_SCHEDULE_BTN_COLOR_ARRAY = {"btn-teal", "btn-orange", "btn-pink", "btn-yellow", "btn-purple", "btn-cyan", "btn-gray"};
