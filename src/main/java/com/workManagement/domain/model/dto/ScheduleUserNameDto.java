@@ -17,7 +17,6 @@ import lombok.Data;
 @Data
 public class ScheduleUserNameDto {
 
-	//フィールド
 	@Id
 	@Column(name = "id")
 	private String id;

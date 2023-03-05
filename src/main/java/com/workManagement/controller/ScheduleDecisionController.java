@@ -7,11 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.shift.form.ScheduleDecisionModifyForm;
 import com.workManagement.common.Const;
 import com.workManagement.domain.model.bean.ScheduleDecisionBean;
 import com.workManagement.domain.model.bean.ScheduleDecisionModifyBean;
 import com.workManagement.domain.service.ScheduleDecisionService;
+import com.workManagement.form.ScheduleDecisionModifyForm;
 
 /**
  * @author saito
@@ -55,14 +55,14 @@ public class ScheduleDecisionController extends BaseController {
 	@RequestMapping("/schedule-decision/modify")
 	public String scheduleDecisionReport(@RequestParam(value="ym") String ym, @RequestParam(value="day") String day, Authentication authentication, Model model) {
 
-		//Service
+		// Service
 		ScheduleDecisionModifyBean scheduleDecisionModifyBean = scheduleDecisionService.scheduleDecisionModify(ym, day);
 		model.addAttribute("bean", scheduleDecisionModifyBean);
 		model.addAttribute("htmlColorArray", Const.HTML_CLASS_SCHEDULE_COLOR_ARRAY);
 		model.addAttribute("htmlBgColorArray", Const.HTML_CLASS_SCHEDULE_BG_COLOR_ARRAY);
 		model.addAttribute("form", new ScheduleDecisionModifyForm(scheduleDecisionModifyBean.getScheduleDayList(), scheduleDecisionModifyBean.getYear(), scheduleDecisionModifyBean.getMonth(), scheduleDecisionModifyBean.getDay()));
 		model.addAttribute("isModalResult", false);
-		//View
+		// View
 		return "view/schedule-decision/schedule-decision-modify";
 	}
 }
