@@ -1,0 +1,63 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>シフト編集</title>
+<th:block th:insert="~{common/import-css}"></th:block>
+<link href="/css/common/cmn-header.css" rel="stylesheet">
+<link href="/css/common/calendar-content.css" rel="stylesheet">
+<link href="/css/common/hover.css" rel="stylesheet">
+<link href="/css/common/spacing.css" rel="stylesheet">
+<link href="/css/common/schedule-color.css" rel="stylesheet">
+</head>
+<body>
+	<div th:insert="common/header"></div>
+	<div class="container">
+		<h1 th:text="${bean.year} + '年' + ${bean.month} + '月'" class="text-center m-0"></h1>
+		<h5 class="text-center">
+			<span class="badge bg-info text-black-50">全体のシフト</span>
+		</h5>
+		<div class="select-month-wrap">
+			<a class="btn btn-success" th:href="'/home/all?ym=' + ${bean.beforeYm}"><i class="bi bi-caret-left"></i> 前月</a>
+			<a class="btn btn-success" th:href="'/home/all?ym=' + ${bean.afterYm}"> 翌月 <i class="bi bi-caret-right"></i></a>
+		</div>
+		<div class="table-responsive">
+			<form th:action="@{/schedule-decision/modify}" method="post">
+				<input th:value="${bean.nowYm}" name="ym" type="hidden">
+				<table class="table table-bordered calendar-table">
+					<thead class="table-info">
+						<tr>
+							<th class="text-center fs-5">シフト</th>
+							<th:block th:each="calendar, status: ${bean.calendarList}">
+								<th th:if="${calendar != null}" class="text-center">
+									<p th:if="${status.count % 7 == 1}" th:text="${calendar}" class="calendar-sunday fs-5 m-0"></p>
+									<p th:if="${status.count % 7 == 0}" th:text="${calendar}" class="calendar-sattday fs-5 m-0"></p>
+									<p th:if="${status.count % 7 != 1 && status.count % 7 != 0}" th:text="${calendar}" class="fs-5 m-0"></p>
+									<button th:value="${calendar}" th:id="submit-btn + ${calendar}" name="day" type="submit" class="visually-hidden"></button>
+								</th>
+							</th:block>
+						</tr>
+					</thead>
+					<tbody class="table-light">
+						<tr th:each="scheduleTime, scheduleTimeStatus: ${bean.scheduleTimeEntity.scheduleTimeFormatList}">
+							<td class="height-125 p-0">
+								<div th:class="${htmlBgColorArray[__${scheduleTimeStatus.count - 1}__]} + ' text-center h-100 w-100 p-2'">
+									<p th:text="${scheduleTime.name}" class="text-break width-100 mb-2"></p>
+									<p th:text="${scheduleTime.startHmFormatTime} + '～' + ${scheduleTime.endHmFormatTime}" class="text-break width-100 m-0"></p>
+									<p th:text="'(休憩: ' + ${scheduleTime.restHmFormatTime} + ')'" class="text-break width-100 m-0"></p>
+								</div>
+							</td>
+							<th:block th:each="calendar: ${bean.calendarList}">
+								<td th:if="${calendar != null}" class="position-relative p-0">
+									<label th:for="submit-btn + ${calendar}" class="position-absolute w-100 h-100 pointer-white"></label>
+									<p th:utext="${bean.scheduleUserNameArray[__${calendar - 1}__][__${scheduleTimeStatus.count - 1}__]}" class="text-break width-100 m-0"></p>
+								</td>
+							</th:block>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+	</div>
+</body>
+</html>
