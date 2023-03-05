@@ -1,0 +1,128 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>シフト編集</title>
+<th:block th:insert="~{common/import-css}"></th:block>
+<link href="/css/common/cmn-header.css" rel="stylesheet">
+<link href="/css/common/spacing.css" rel="stylesheet">
+<link href="/css/common/schedule-color.css" rel="stylesheet">
+</head>
+<body>
+	<div th:insert="common/header"></div>
+	<div class="container">
+		<div class="position-absolute w-75 height-per-42 schedule-wrap">
+			<a th:href="'/schedule-decision?ym=' + ${bean.year} + ${bean.month}" class="btn btn-secondary rounded-circle position-absolute">
+				<i class="bi bi-arrow-left"></i>
+			</a>
+			<h2 th:text="${bean.year} + '年' + ${bean.month} + '月' + ${bean.day} + '日 提出されたシフト予定'" class="text-center"></h2>
+			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+				<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#scheduleTimeModal">シフト詳細</button>
+			</div>
+			<div class="table-responsive position-absolute w-100 h-75">
+				<table class="table table-bordered">
+					<thead class="table-info text-center">
+						<tr>
+							<th>ユーザー</th>
+							<th th:each="scheduleTime, status: ${bean.scheduleTimeEntity.scheduleTimeFormatList}" th:text="${scheduleTime.name}" th:class="${htmlColorArray[__${status.count - 1}__]} + ' border'"></th>
+						</tr>
+					</thead>
+					<tbody class="table-light text-center">
+						<tr th:each="schedulePreDay: ${bean.schedulePreDayList}">
+							<td th:text="${schedulePreDay.userName}"></td>
+							<td th:each="scheduleTime, scheduleTimeStatus: ${bean.scheduleTimeEntity.scheduleTimeFormatList}">
+								<i th:if="${schedulePreDay.scheduleFormatTFArray[__${scheduleTimeStatus.count - 1}__]}" class="bi bi-circle"></i>
+								<i th:if="${!schedulePreDay.scheduleFormatTFArray[__${scheduleTimeStatus.count - 1}__]}" class="bi bi-x-lg"></i>
+							</td>
+						</tr>
+						<tr th:if="${bean.schedulePreDayList.isEmpty}">
+							<td th:text="${bean.year} + '年' + ${bean.month} + '月にシフトを提出したユーザーはいません'" colspan="4"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="position-absolute w-75 height-per-47 top-per-51 form-wrap">
+			<form th:object="${form}" th:action="@{/schedule-decision/modify/modify}" method="post">
+				<h2 th:text="${bean.year} + '年' + ${bean.month} + '月' + ${bean.day} + '日 シフトを登録'" class="text-center"></h2>
+				<div class="table-responsive position-absolute w-100 h-75">
+					<table class="table table-bordered">
+						<thead class="table-info text-center">
+							<tr>
+								<th>ユーザー</th>
+								<th th:each="scheduleTime, status: ${bean.scheduleTimeEntity.scheduleTimeFormatList}" th:text="${scheduleTime.name}" th:class="${htmlColorArray[__${status.count - 1}__]} + ' border'"></th>
+							</tr>
+						</thead>
+						<tbody class="table-light text-center">
+							<tr th:each="scheduleDay, scheduleDayStatus: ${bean.scheduleDayList}">
+								<td class="pt-3">
+									<input th:field="*{userArray[__${scheduleDayStatus.count - 1}__][0]}" type="hidden">
+									<span th:text="*{userArray[__${scheduleDayStatus.count - 1}__][1]}" class="fs-5"></span>
+								</td>
+								<td th:each="scheduleTime, scheduleTimeStatus: ${bean.scheduleTimeEntity.scheduleTimeFormatList}">
+									<select th:field="*{scheduleArray[__${scheduleDayStatus.count - 1}__][__${scheduleTimeStatus.count - 1}__]}" class="form-select fs-3 pt-0 pb-0">
+										<option value="1" class="text-center fs-3">○</option>
+										<option value="0" class="text-center fs-3">×</option>
+									</select>
+								</td>
+							</tr>
+							<tr th:if="${bean.scheduleDayList.isEmpty}">
+								<td th:text="${bean.year} + '年' + ${bean.month} + '月' + ${bean.day} + '日に登録されたユーザーはいません'" colspan="4"></td>
+							</tr>
+							<tr>
+								<td>
+									<select th:field="*{addUserId}" class="form-select fs-5">
+										<option value="" class="text-center" selected>未選択(追加しない)</option>
+										<option th:each="users: ${bean.usersList}" th:text="${users.name}" th:value="${users.id}" class="text-center"></option>
+									</select>
+								</td>
+								<td th:each="scheduleTime, status: ${bean.scheduleTimeEntity.scheduleTimeFormatList}">
+									<select th:field="*{addScheduleArray[__${status.count - 1}__]}" class="form-select fs-3 pt-0 pb-0">
+										<option value="1" class="text-center fs-3">○</option>
+										<option value="0" class="text-center fs-3">×</option>
+									</select>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="position-absolute end-0 bottom-0">
+					<input th:field="*{ym}" type="hidden">
+					<input th:field="*{day}" type="hidden">
+					<button type="submit" class="btn btn-primary">シフト登録</button>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- スケジュール時間詳細モーダル -->
+	<div class="modal fade" id="scheduleTimeModal" tabindex="-1" aria-labelledby="exampleModalLiveLabel" style="display: none;" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modal-news-title">シフト時間</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<ul class="list-group">
+						<li class="list-group-item list-group-item-dark">
+							<p class="row m-0">
+								<span class="col-5">名前</span>
+								<span class="col-5">勤務時間</span>
+								<span class="col-2">休憩</span>
+							</p>
+						</li>
+						<li th:each="scheduleTime, status: ${bean.scheduleTimeEntity.scheduleTimeFormatList}" th:class="${htmlBgColorArray[__${status.count - 1}__]} + ' list-group-item'">
+							<p class="row m-0">
+								<span th:text="${scheduleTime.name}" class="col-5"></span>
+								<span th:text="${scheduleTime.startHmFormatTime} + '～' + ${scheduleTime.endHmFormatTime}" class="col-5"></span>
+								<span th:text="${scheduleTime.restHmFormatTime}" class="col-2"></span>
+							</p>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div th:if="${isModalResult}" th:insert="common/modal-result"></div>
+</body>
+</html>
