@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+	<div th:fragment="fragment" class="modal in" id="modal-result" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: block; padding-left: 0px;">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 th:text="${modalResultTitle}" class="modal-title" id="myModalLabel">Modal title</h4>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h5 th:if="${modalResultContentSuccess != null}" th:text="${modalResultContentSuccess}" class="text-center"></h5>
+					<h5 th:if="${modalResultContentFailed != null}" class="text-danger text-center">
+						<i class="bi bi-exclamation-triangle-fill"></i>
+						<span th:text="${modalResultContentFailed}"></span>
+					</h5>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
