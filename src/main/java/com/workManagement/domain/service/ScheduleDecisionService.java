@@ -1,6 +1,7 @@
 package com.workManagement.domain.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +13,20 @@ import com.workManagement.domain.model.bean.CmnScheduleCalendarBean;
 import com.workManagement.domain.model.bean.CmnScheduleUserNameBean;
 import com.workManagement.domain.model.bean.ScheduleDecisionBean;
 import com.workManagement.domain.model.bean.ScheduleDecisionModifyBean;
+import com.workManagement.domain.model.bean.ScheduleDecisionModifyModifyBean;
 import com.workManagement.domain.model.dto.ScheduleDayDto;
 import com.workManagement.domain.model.dto.SchedulePreDayDto;
+import com.workManagement.domain.model.entity.ScheduleEntity;
 import com.workManagement.domain.model.entity.ScheduleTimeEntity;
 import com.workManagement.domain.model.entity.UsersEntity;
 import com.workManagement.domain.repository.ScheduleDayRepository;
 import com.workManagement.domain.repository.SchedulePreDayRepository;
+import com.workManagement.domain.repository.ScheduleRepository;
 import com.workManagement.domain.repository.ScheduleTimeRepository;
 import com.workManagement.domain.repository.UsersRepository;
 import com.workManagement.domain.service.common.CmnScheduleCalendarService;
 import com.workManagement.domain.service.common.CmnScheduleUserNameService;
+import com.workManagement.form.ScheduleDecisionModifyForm;
 
 /**
  * @author saito
@@ -42,6 +47,9 @@ public class ScheduleDecisionService extends BaseService {
 
 	@Autowired
 	private UsersRepository usersRepository;
+
+	@Autowired
+	private ScheduleRepository scheduleRepository;
 
 	@Autowired
 	private CmnScheduleCalendarService cmnScheduleCalendarService;
@@ -78,7 +86,7 @@ public class ScheduleDecisionService extends BaseService {
 
 
 	/**
-	 * [Service] 確定スケジュール修正画面 (/schedule-decision)
+	 * [Service] 確定スケジュール修正画面 (/schedule-decision/modify)
 	 *
 	 * @param ym 年月
 	 * @param day 日付
@@ -103,6 +111,46 @@ public class ScheduleDecisionService extends BaseService {
 
 		// Beanにセット
 		ScheduleDecisionModifyBean scheduleDecisionModifyBean = new ScheduleDecisionModifyBean();
+		scheduleDecisionModifyBean.setYear(ymdArray[0]);
+		scheduleDecisionModifyBean.setMonth(ymdArray[1]);
+		scheduleDecisionModifyBean.setDay(ymdArray[2]);
+		scheduleDecisionModifyBean.setSchedulePreDayList(schedulePreDayList);
+		scheduleDecisionModifyBean.setScheduleDayList(scheduleUserList);
+		scheduleDecisionModifyBean.setScheduleTimeEntity(scheduleTimeEntity);
+		scheduleDecisionModifyBean.setUsersList(usersList);
+		return scheduleDecisionModifyBean;
+	}
+
+
+	/**
+	 * [Service] 確定スケジュール修正機能 (/schedule-decision/modify/modify)
+	 *
+	 * @param ym 年月
+	 * @param day 日付
+	 * @return ScheduleDecisionModifyBean
+	 */
+	public ScheduleDecisionModifyModifyBean scheduleDecisionModifyModify(ScheduleDecisionModifyForm scheduleDecisionModifyForm) {
+
+		// 確定スケジュールを更新する
+		boolean isUpdate = updateSchedule(scheduleDecisionModifyForm);
+		// CmnScheduleCalendarServiceからカレンダー, 年月, 最終日を取得
+		CmnScheduleCalendarBean cmnScheduleCalendarBean = cmnScheduleCalendarService.generateCalendarYmByYm(scheduleDecisionModifyForm.getYm());
+		// 年, 月, 日をそれぞれ配列で取得
+		String[] ymdArray = calcYmdArray(scheduleDecisionModifyForm.getYm(), scheduleDecisionModifyForm.getDay());
+		// 1日分の予定スケジュールをユーザ毎に取得
+		List<SchedulePreDayDto> schedulePreDayList = selectSchedulePreDay(scheduleDecisionModifyForm.getYm(), scheduleDecisionModifyForm.getDay());
+		// 1日分の確定スケジュールをユーザ毎に取得
+		List<ScheduleDayDto> scheduleUserList = selectScheduleDay(scheduleDecisionModifyForm.getYm(), scheduleDecisionModifyForm.getDay());
+		// スケジュール時間区分を取得
+		ScheduleTimeEntity scheduleTimeEntity = selectScheduleTime(cmnScheduleCalendarBean.getLastDateYmd());
+		// 未退職ユーザを全て取得
+		List<UsersEntity> usersDbList = selectUsersNotDelFlg();
+		// 確定スケジュールに新規登録可能ユーザのみに変換
+		List<UsersEntity> usersList = calcUserRecordableSchedule(scheduleUserList, usersDbList);
+
+		// Beanにセット
+		ScheduleDecisionModifyModifyBean scheduleDecisionModifyBean = new ScheduleDecisionModifyModifyBean();
+		scheduleDecisionModifyBean.setUpdate(isUpdate);
 		scheduleDecisionModifyBean.setYear(ymdArray[0]);
 		scheduleDecisionModifyBean.setMonth(ymdArray[1]);
 		scheduleDecisionModifyBean.setDay(ymdArray[2]);
@@ -399,5 +447,239 @@ public class ScheduleDecisionService extends BaseService {
 	 */
 	private List<UsersEntity> selectUsersNotDelFlg() {
 		return usersRepository.selectUsersNotDelFlg(Const.USERS_DEL_FLG);
+	}
+
+
+	/**
+	 * [Repository] 確定スケジュール更新処理
+	 *
+	 * <p>
+	 * scheduleDecisionModifyFormから確定スケジュールに新規でユーザとスケジュール及び更新するユーザとスケジュールを登録する<br>
+	 * ただし、確定スケジュールに新規登録するユーザがいない(ユーザが指定されていないまたはスケジュールを登録していない)ときは登録されない<br>
+	 * 既に確定スケジュールに登録済みのユーザはスケジュールが登録していないときでもその情報が登録される
+	 *
+	 * @param scheduleDecisionModifyForm Formクラス
+	 * @return boolean 更新判定<br>
+	 * true: 更新したとき<br>
+	 * false: 更新に失敗したとき
+	 */
+	private boolean updateSchedule(ScheduleDecisionModifyForm scheduleDecisionModifyForm) {
+
+		//--------------------------
+		//新規確定スケジュール追加
+		//--------------------------
+
+		// 登録する日付を取得
+		String ym = scheduleDecisionModifyForm.getYm();
+		String day = String.format("%02d", Integer.parseInt(scheduleDecisionModifyForm.getDay()));
+
+		// 新規登録するユーザIDとスケジュールを取得
+		String addUser = scheduleDecisionModifyForm.getAddUserId();
+		String[] addScheduleArray = scheduleDecisionModifyForm.getAddScheduleArray();
+
+		// 登録するスケジュールがある(addScheduleArrayに1が含まれているかつaddUserIdが""でない)とき
+		if (Arrays.asList(addScheduleArray).contains(Const.SCHEDULE_RECORDED) && !addUser.isEmpty()) {
+
+			// 対象の年月から新規で登録するユーザの確定スケジュールを検索する
+			ScheduleEntity addNewUserScheduleEntity = scheduleRepository.selectSchedule(ym, addUser);
+
+			// 該当の年月に新規で登録するユーザが未登録のとき、値をインスタンス化して値をセットするする
+			if (addNewUserScheduleEntity == null) {
+				addNewUserScheduleEntity = new ScheduleEntity();
+				addNewUserScheduleEntity.setYm(ym);
+				addNewUserScheduleEntity.setUser(addUser);
+			}
+
+			// 新規で登録するユーザのスケジュール情報を取得
+			String addSchedule = scheduleDecisionModifyForm.addScheduleArrayFormatString();
+
+			// 登録する日付(day)に応じてスケジュール情報をセットする
+			if ("01".equals(day)) {
+				addNewUserScheduleEntity.setDay1(addSchedule);
+			} else if ("02".equals(day)) {
+				addNewUserScheduleEntity.setDay2(addSchedule);
+			} else if ("03".equals(day)) {
+				addNewUserScheduleEntity.setDay3(addSchedule);
+			} else if ("04".equals(day)) {
+				addNewUserScheduleEntity.setDay4(addSchedule);
+			} else if ("05".equals(day)) {
+				addNewUserScheduleEntity.setDay5(addSchedule);
+			} else if ("06".equals(day)) {
+				addNewUserScheduleEntity.setDay6(addSchedule);
+			} else if ("07".equals(day)) {
+				addNewUserScheduleEntity.setDay7(addSchedule);
+			} else if ("08".equals(day)) {
+				addNewUserScheduleEntity.setDay8(addSchedule);
+			} else if ("09".equals(day)) {
+				addNewUserScheduleEntity.setDay9(addSchedule);
+			} else if ("10".equals(day)) {
+				addNewUserScheduleEntity.setDay10(addSchedule);
+			} else if ("11".equals(day)) {
+				addNewUserScheduleEntity.setDay11(addSchedule);
+			} else if ("12".equals(day)) {
+				addNewUserScheduleEntity.setDay12(addSchedule);
+			} else if ("13".equals(day)) {
+				addNewUserScheduleEntity.setDay13(addSchedule);
+			} else if ("14".equals(day)) {
+				addNewUserScheduleEntity.setDay14(addSchedule);
+			} else if ("15".equals(day)) {
+				addNewUserScheduleEntity.setDay15(addSchedule);
+			} else if ("16".equals(day)) {
+				addNewUserScheduleEntity.setDay16(addSchedule);
+			} else if ("17".equals(day)) {
+				addNewUserScheduleEntity.setDay17(addSchedule);
+			} else if ("18".equals(day)) {
+				addNewUserScheduleEntity.setDay18(addSchedule);
+			} else if ("19".equals(day)) {
+				addNewUserScheduleEntity.setDay19(addSchedule);
+			} else if ("20".equals(day)) {
+				addNewUserScheduleEntity.setDay20(addSchedule);
+			} else if ("21".equals(day)) {
+				addNewUserScheduleEntity.setDay21(addSchedule);
+			} else if ("22".equals(day)) {
+				addNewUserScheduleEntity.setDay22(addSchedule);
+			} else if ("23".equals(day)) {
+				addNewUserScheduleEntity.setDay23(addSchedule);
+			} else if ("24".equals(day)) {
+				addNewUserScheduleEntity.setDay24(addSchedule);
+			} else if ("25".equals(day)) {
+				addNewUserScheduleEntity.setDay25(addSchedule);
+			} else if ("26".equals(day)) {
+				addNewUserScheduleEntity.setDay26(addSchedule);
+			} else if ("27".equals(day)) {
+				addNewUserScheduleEntity.setDay27(addSchedule);
+			} else if ("28".equals(day)) {
+				addNewUserScheduleEntity.setDay28(addSchedule);
+			} else if ("29".equals(day)) {
+				addNewUserScheduleEntity.setDay29(addSchedule);
+			} else if ("30".equals(day)) {
+				addNewUserScheduleEntity.setDay30(addSchedule);
+			} else if ("31".equals(day)) {
+				addNewUserScheduleEntity.setDay31(addSchedule);
+			}
+
+			// 新規で追加したスケジュールをDB更新
+			scheduleRepository.save(addNewUserScheduleEntity);
+		}
+
+
+		//-------------------------
+		// 登録済みスケジュール更新
+		//-------------------------
+
+		//既存で登録されたユーザと更新スケジュールを取得
+		String[][] userArray2 = scheduleDecisionModifyForm.getUserArray();
+		String[][] scheduleArray2 = scheduleDecisionModifyForm.getScheduleArray();
+
+		// 該当する年月の全てのユーザの確定スケジュールをすべて取得
+		List<ScheduleEntity> scheduleList = scheduleRepository.selectSchedule(ym);
+
+		// 該当の年月に登録されているユーザだけループ
+		for (int i = 0; i < scheduleList.size(); i++) {
+			ScheduleEntity entity = scheduleList.get(i);
+
+			for (int j = 0; j < userArray2.length; j++) {
+
+				// 既に登録済みのユーザ取得
+				String[] userArray = userArray2[j];
+
+				// 更新するユーザが一致したとき
+				if (userArray[0].equals(entity.getUser())) {
+
+					// DBに更新するスケジュールを格納する
+					String schedule = "";
+
+					// 対象のユーザのスケジュール時間区分ごとの更新スケジュールを配列で所得
+					String[] scheduleArray = scheduleArray2[j];
+
+					// スケジュール時間区分ごとの更新スケジュールだけループ
+					for (int k = 0; k < Const.SCHEDULE_RECORDABLE_MAX_DIVISION; k++) {
+
+						if (scheduleArray.length <= k) {
+							// スケジュール時間区分が存在しないとき、未登録情報を格納
+							schedule += Const.SCHEDULE_NOT_RECORDED;
+						} else if(!Const.SCHEDULE_RECORDED.equals(scheduleArray[k])) {
+							// スケジュールが登録されていないとき、未登録情報を格納
+							schedule += Const.SCHEDULE_NOT_RECORDED;
+						} else {
+							// スケジュールが登録されているとき、登録情報を格納
+							schedule += Const.SCHEDULE_RECORDED;
+						}
+					}
+
+					// 該当の日付のスケジュールを更新する
+					if ("01".equals(day)) {
+						entity.setDay1(schedule);
+					} else if ("02".equals(day)) {
+						entity.setDay2(schedule);
+					} else if ("03".equals(day)) {
+						entity.setDay3(schedule);
+					} else if ("04".equals(day)) {
+						entity.setDay4(schedule);
+					} else if ("05".equals(day)) {
+						entity.setDay5(schedule);
+					} else if ("06".equals(day)) {
+						entity.setDay6(schedule);
+					} else if ("07".equals(day)) {
+						entity.setDay7(schedule);
+					} else if ("08".equals(day)) {
+						entity.setDay8(schedule);
+					} else if ("09".equals(day)) {
+						entity.setDay9(schedule);
+					} else if ("10".equals(day)) {
+						entity.setDay10(schedule);
+					} else if ("11".equals(day)) {
+						entity.setDay11(schedule);
+					} else if ("12".equals(day)) {
+						entity.setDay12(schedule);
+					} else if ("13".equals(day)) {
+						entity.setDay13(schedule);
+					} else if ("14".equals(day)) {
+						entity.setDay14(schedule);
+					} else if ("15".equals(day)) {
+						entity.setDay15(schedule);
+					} else if ("16".equals(day)) {
+						entity.setDay16(schedule);
+					} else if ("17".equals(day)) {
+						entity.setDay17(schedule);
+					} else if ("18".equals(day)) {
+						entity.setDay18(schedule);
+					} else if ("19".equals(day)) {
+						entity.setDay19(schedule);
+					} else if ("20".equals(day)) {
+						entity.setDay20(schedule);
+					} else if ("21".equals(day)) {
+						entity.setDay21(schedule);
+					} else if ("22".equals(day)) {
+						entity.setDay22(schedule);
+					} else if ("23".equals(day)) {
+						entity.setDay23(schedule);
+					} else if ("24".equals(day)) {
+						entity.setDay24(schedule);
+					} else if ("25".equals(day)) {
+						entity.setDay25(schedule);
+					} else if ("26".equals(day)) {
+						entity.setDay26(schedule);
+					} else if ("27".equals(day)) {
+						entity.setDay27(schedule);
+					} else if ("28".equals(day)) {
+						entity.setDay28(schedule);
+					} else if ("29".equals(day)) {
+						entity.setDay29(schedule);
+					} else if ("30".equals(day)) {
+						entity.setDay30(schedule);
+					} else if ("31".equals(day)) {
+						entity.setDay31(schedule);
+					}
+
+					// 更新後のスケジュールをセットする
+					scheduleList.set(i, entity);
+				}
+			}
+		}
+
+		// 更新した確定スケジュールを全てDB更新
+		scheduleRepository.saveAll(scheduleList);
+		return true;
 	}
 }
