@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8" />
 <title>シフト編集</title>
-<th:block th:insert="~{common/import-css}"></th:block>
+<th:block th:insert="~{common/import-css :: fragment}"></th:block>
+<th:block th:insert="~{common/import-js :: fragment}"></th:block>
 <link href="/css/common/cmn-header.css" rel="stylesheet">
 <link href="/css/common/spacing.css" rel="stylesheet">
 <link href="/css/common/schedule-color.css" rel="stylesheet">
+<script src="/js/common/modal-result.js"></script>
 </head>
 <body>
-	<div th:insert="common/header"></div>
+	<div th:insert="~{common/header :: fragment}"></div>
 	<div class="container">
 		<div class="position-absolute w-75 height-per-42 schedule-wrap">
 			<a th:href="'/schedule-decision?ym=' + ${bean.year} + ${bean.month}" class="btn btn-secondary rounded-circle position-absolute">
@@ -123,6 +125,6 @@
 			</div>
 		</div>
 	</div>
-	<div th:if="${isModalResult}" th:insert="common/modal-result"></div>
+	<div th:if="${isModalResult}" th:insert="~{common/modal-result :: fragment}"></div>
 </body>
 </html>
