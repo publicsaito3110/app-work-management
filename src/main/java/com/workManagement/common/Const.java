@@ -45,6 +45,9 @@ public class Const {
 	public static final String[] HTML_CLASS_SCHEDULE_BG_COLOR_ARRAY = {"bg-teal", "bg-orange", "bg-pink", "bg-yellow", "bg-purple", "bg-cyan", "bg-gray"};
 	public static final String[] HTML_CLASS_SCHEDULE_BTN_COLOR_ARRAY = {"btn-teal", "btn-orange", "btn-pink", "btn-yellow", "btn-purple", "btn-cyan", "btn-gray"};
 
+	// タイムゾーン
+	public static final long SIMPLE_DATE_FORMAT_SERVER_TIME_ZONE_JP_DISTANCE = -32400000;
+
 	//-----------
 	// 正規表現
 	//-----------
