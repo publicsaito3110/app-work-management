@@ -1,0 +1,88 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>シフト勤務状況</title>
+<th:block th:insert="~{common/import-css :: fragment}"></th:block>
+<th:block th:insert="~{common/import-js :: fragment}"></th:block>
+<link href="/css/common/cmn-header.css" rel="stylesheet">
+<link href="/css/common/spacing.css" rel="stylesheet">
+<script src="/js/schedule-report.js"></script>
+</head>
+<body>
+	<div th:insert="~{common/header :: fragment}"></div>
+	<div class="container">
+		<div class="position-absolute w-75 h-50">
+			<h2 th:text="${bean.year} + '年の勤務状況'"></h2>
+			<div class="row mb-3">
+				<h5>勤務日数を検索</h5>
+				<div class="col-3">
+					<input th:min="${bean.year} + '-01'" th:max="${bean.year} + '-12'" type="month" id="schedule-report-seach-count-month-input" class="form-control">
+				</div>
+				<button id="schedule-report-seach-count-btn" class="col-1 btn btn-primary" disabled>検索</button>
+			</div>
+			<div class="table-responsive position-absolute w-100 height-per-65">
+				<table class="table table-bordered">
+					<caption class="caption-top">勤務日数 (日)</caption>
+					<thead class="table-info text-center">
+						<tr>
+							<th>年月</th>
+							<th th:each="scheduleCountYear: ${bean.scheduleCountYearList}" th:text="${scheduleCountYear.userName}"></th>
+							<th th:if="${bean.scheduleCountYearList.isEmpty}"></th>
+						</tr>
+					</thead>
+					<tbody class="table-light text-center" id="tbody-count">
+						<tr>
+							<td th:text="${bean.year} + '年' + ${bean.month} + '月'" class="width-60"></td>
+							<td th:each="scheduleCountMonth: ${bean.scheduleCountMonthList}" th:text="${scheduleCountMonth.workCount}" class="width-60"></td>
+							<td th:if="${bean.scheduleCountMonthList.isEmpty}" class="width-100">登録されたシフトはありません</td>
+						</tr>
+					</tbody>
+					<tfoot class="table-secondary text-center">
+						<tr>
+							<td th:text="${bean.year} + '年'"></td>
+							<td th:each="scheduleCountYear: ${bean.scheduleCountYearList}" th:text="${scheduleCountYear.workCount}" class="width-60"></td>
+							<td th:if="${bean.scheduleCountYearList.isEmpty}" class="width-100">登録されたシフトはありません</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+		<div class="position-absolute w-75 h-50 top-50">
+			<div class="row mt-3 mb-3">
+				<h5>勤務時間を検索</h5>
+				<div class="col-3">
+					<input th:min="${bean.year} + '-01'" th:max="${bean.year} + '-12'" type="month" id="schedule-report-seach-time-month-input" class="form-control">
+				</div>
+				<button id="schedule-report-seach-time-btn" class="col-1 btn btn-primary" disabled>検索</button>
+			</div>
+			<div class="table-responsive position-absolute w-100 height-per-65">
+				<table class="table table-bordered">
+					 <caption class="caption-top">勤務時間 (時間)</caption>
+					<thead class="table-info text-center">
+						<tr>
+							<th>年月</th>
+							<th th:each="scheduleCountYear: ${bean.scheduleCountYearList}" th:text="${scheduleCountYear.userName}"></th>
+							<th th:if="${bean.scheduleCountYearList.isEmpty}"></th>
+						</tr>
+					</thead>
+					<tbody class="table-light text-center" id="tbody-time">
+						<tr>
+							<td th:text="${bean.year} + '年' + ${bean.month} + '月'" class="width-60"></td>
+							<td th:each="scheduleTimeMonth: ${bean.scheduleTimeMonthArray}" th:text="${scheduleTimeMonth}" class="width-60"></td>
+							<td th:if="${bean.scheduleTimeMonthArray.length == 0}" class="width-100">登録されたシフトはありません</td>
+						</tr>
+					</tbody>
+					<tfoot class="table-secondary text-center">
+						<tr>
+							<td th:text="${bean.year} + '年'"></td>
+							<td th:each="scheduleTimeYear: ${bean.scheduleTimeYearArray}" th:text="${scheduleTimeYear}" class="width-60"></td>
+							<td th:if="${bean.scheduleTimeYearArray.length == 0}" class="width-100">登録されたシフトはありません</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
