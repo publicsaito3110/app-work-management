@@ -12,7 +12,7 @@ import com.workManagement.domain.model.dto.ScheduleCountYearDto;
  *
  */
 @Repository
-public interface ScheduleCountYearRepository extends BaseRepository<ScheduleCountYearDto, String> {
+public interface ScheduleCountYearRepository extends BaseRepository<ScheduleCountYearDto, Integer> {
 
 
 	/**

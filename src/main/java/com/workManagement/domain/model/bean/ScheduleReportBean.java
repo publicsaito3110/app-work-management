@@ -26,7 +26,7 @@ public class ScheduleReportBean {
 
 	private List<ScheduleCountYearDto> scheduleCountYearList;
 
-	private String[] scheduleWorkTimeMonthArray;
+	private String[] scheduleTimeMonthArray;
 
-	private String[] scheduleWorkTimeYearArray;
+	private String[] scheduleTimeYearArray;
 }

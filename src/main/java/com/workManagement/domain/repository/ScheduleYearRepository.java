@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.workManagement.domain.model.dto.ScheduleCountYearDto;
 import com.workManagement.domain.model.dto.ScheduleYearDto;
 
 /**
@@ -13,7 +12,7 @@ import com.workManagement.domain.model.dto.ScheduleYearDto;
  *
  */
 @Repository
-public interface ScheduleYearRepository extends BaseRepository<ScheduleCountYearDto, String> {
+public interface ScheduleYearRepository extends BaseRepository<ScheduleYearDto, String> {
 
 
 	/**

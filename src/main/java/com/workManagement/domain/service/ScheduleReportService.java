@@ -90,8 +90,8 @@ public class ScheduleReportService extends BaseService {
 		scheduleReportBean.setMonth(Integer.parseInt(yearMonthDayArray[1]));
 		scheduleReportBean.setScheduleCountMonthList(scheduleCountMonthList);
 		scheduleReportBean.setScheduleCountYearList(scheduleWorkCountYearList);
-		scheduleReportBean.setScheduleWorkTimeMonthArray(scheduleWorkTimeMonthArray);
-		scheduleReportBean.setScheduleWorkTimeYearArray(scheduleWorkTimeYearArray);
+		scheduleReportBean.setScheduleTimeMonthArray(scheduleWorkTimeMonthArray);
+		scheduleReportBean.setScheduleTimeYearArray(scheduleWorkTimeYearArray);
 		return scheduleReportBean;
 	}
 
