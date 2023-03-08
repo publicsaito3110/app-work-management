@@ -1,0 +1,19 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<th:block th:insert="~{common/import-css :: fragment}"></th:block>
+<link href="/css/common/spacing.css" rel="stylesheet">
+</head>
+<body>
+	<table class="table table-bordered m-0">
+		<tbody class="table-light">
+			<tr>
+				<td th:text="${bean.year} + '年' + ${bean.month} + '月'" class="width-60 search-td1"></td>
+				<td th:each="scheduleTimeMonth: ${bean.scheduleTimeMonthArray}" th:text="${scheduleTimeMonth}" class="width-60 search-td2"></td>
+				<td th:if="${bean.scheduleTimeMonthArray.length == 0}" class="search-td2">登録されたシフトはありません</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

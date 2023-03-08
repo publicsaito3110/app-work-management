@@ -12,8 +12,8 @@
 <body>
 	<div th:insert="~{common/header :: fragment}"></div>
 	<div class="container">
-		<div class="position-absolute w-75 h-50">
-			<h2 th:text="${bean.year} + '年の勤務状況'"></h2>
+		<div class="position-absolute w-75 height-per-42">
+			<h2 th:text="${bean.year} + '年の勤務状況'" class="text-center"></h2>
 			<div class="row mb-3">
 				<h5>勤務日数を検索</h5>
 				<div class="col-3">
@@ -48,7 +48,7 @@
 				</table>
 			</div>
 		</div>
-		<div class="position-absolute w-75 h-50 top-50">
+		<div class="position-absolute w-75 height-per-47 top-per-51">
 			<div class="row mt-3 mb-3">
 				<h5>勤務時間を検索</h5>
 				<div class="col-3">
