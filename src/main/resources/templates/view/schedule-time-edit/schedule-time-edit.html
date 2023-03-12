@@ -1,0 +1,260 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>シフト勤務時間編集</title>
+<th:block th:insert="~{common/import-css :: fragment}"></th:block>
+<th:block th:insert="~{common/import-js :: fragment}"></th:block>
+<link href="/css/common/cmn-header.css" rel="stylesheet">
+<link href="/css/shift-edit.css" rel="stylesheet">
+<link href="/css/common/calendar-content.css" rel="stylesheet">
+<link href="/css/common/schedule-color.css" rel="stylesheet">
+<script src="/js/shift-edit.js"></script>
+</head>
+<body>
+	<div th:insert="common/header"></div>
+	<div class="container">
+		<h2 th:text="${year} + '年' + ${month} + '月 勤務時間'"></h2>
+		<div class="select-month-wrap">
+			<a class="btn btn-success" th:href="'/shift-edit?ym=' + ${beforeYm}"><i class="bi bi-caret-left"></i> 前月</a>
+			<a class="btn btn-success" th:href="'/shift-edit?ym=' + ${afterYm}"> 翌月 <i class="bi bi-caret-right"></i></a>
+		</div>
+		<ul class="list-group">
+			<li class="list-group-item list-group-item-dark">
+				<h5 class="row m-0">
+					<span class="col-5">名前</span>
+					<span class="col-5">勤務時間</span>
+					<span class="col-2">休憩</span>
+				</h5>
+			</li>
+			<li th:each="scheduleTime, status: ${scheduleTimeEntity.scheduleTimeFormatList}" th:class="${scheduleTimeHtmlClassBgColorArray[__${status.count - 1}__]} + ' list-group-item'">
+				<h5 class="row m-0">
+					<span th:text="${scheduleTime.name}" class="col-5"></span>
+					<span th:text="${scheduleTime.startHmsFormatTime} + '～' + ${scheduleTime.endHmsFormatTime}" class="col-5"></span>
+					<span th:text="${scheduleTime.restHmsFormatTime}" class="col-2"></span>
+				</h5>
+			</li>
+			<li th:if="${scheduleTimeEntity.scheduleTimeFormatList.isEmpty}" class="list-group-item">登録済みの勤務時間はありません</li>
+		</ul>
+		<br>
+		<h2>勤務時間の変更</h2>
+		<form th:action="@{/shift-edit/add}" th:object="${shiftEditAddForm}" method="post" class="row g-3">
+			<div class="col-2">
+				<label for="inputAddress" class="form-label">変更適用年月</label>
+				<input th:field="*{startYm}" th:errorclass="is-invalid" type="month" class="form-control" required>
+				<div th:errors="*{startYm}" class="invalid-feedback"></div>
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div class="col-5">
+						<label for="inputAddress" class="form-label">名前</label>
+						<input th:field="*{name1}" th:errorclass="is-invalid" type="text" class="form-control" maxlength="20" required>
+						<div th:errors="*{name1}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">始業時間</label>
+						<input th:field="*{startHm1}" th:errorclass="is-invalid" type="time" class="form-control" required>
+						<div th:errors="*{startHm1}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm1}" th:errorclass="is-invalid" type="time" class="form-control" required>
+						<div th:errors="*{endHm1}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">休憩時間</label>
+						<input th:field="*{restHm1}" th:errorclass="is-invalid" type="time" class="form-control" required>
+						<div th:errors="*{restHm1}" class="invalid-feedback"></div>
+					</div>
+				</div>
+			</div>
+			<div id="input-form2" class="col-12 defoult-none-input-form">
+				<div class="row">
+					<div class="col-5">
+						<label class="form-label">名前</label>
+						<input th:field="*{name2}" th:errorclass="is-invalid" type="text" class="input2 form-control" maxlength="20">
+						<div th:errors="*{name2}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">始業時間</label>
+						<input th:field="*{startHm2}" th:errorclass="is-invalid" type="time" class="input2 form-control">
+						<div th:errors="*{startHm2}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm2}" th:errorclass="is-invalid" type="time" class="input2 form-control">
+						<div th:errors="*{endHm2}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">休憩時間</label>
+						<input th:field="*{restHm2}" th:errorclass="is-invalid" type="time" class="input2 form-control">
+						<div th:errors="*{restHm2}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-1 position-relative">
+						<label for="delete-input-btn" class="form-label text-danger fs-5 position-absolute top-50 p-1">
+							<i class="bi bi-dash-circle"></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="input-form3" class="col-12 defoult-none-input-form">
+				<div class="row">
+					<div class="col-5">
+						<label class="form-label">名前</label>
+						<input th:field="*{name3}" th:errorclass="is-invalid" type="text" class="input3 form-control" maxlength="20">
+						<div th:errors="*{name3}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">始業時間</label>
+						<input th:field="*{startHm3}" th:errorclass="is-invalid" type="time" class="input3 form-control">
+						<div th:errors="*{startHm3}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm3}" th:errorclass="is-invalid" type="time" class="input3 form-control">
+						<div th:errors="*{endHm3}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">休憩時間</label>
+						<input th:field="*{restHm3}" th:errorclass="is-invalid" type="time" class="input3 form-control">
+						<div th:errors="*{restHm3}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-1 position-relative">
+						<label for="delete-input-btn" class="form-label text-danger fs-5 position-absolute top-50 p-1">
+							<i class="bi bi-dash-circle"></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="input-form4" class="col-12 defoult-none-input-form">
+				<div class="row">
+					<div class="col-5">
+						<label class="form-label">名前</label>
+						<input th:field="*{name4}" th:errorclass="is-invalid" type="text" class="input4 form-control" maxlength="20">
+						<div th:errors="*{name4}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">始業時間</label>
+						<input th:field="*{startHm4}" th:errorclass="is-invalid" type="time" class="input4 form-control">
+						<div th:errors="*{startHm4}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm4}" th:errorclass="is-invalid" type="time" class="input4 form-control">
+						<div th:errors="*{endHm4}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">休憩時間</label>
+						<input th:field="*{restHm4}" th:errorclass="is-invalid" type="time" class="input4 form-control">
+						<div th:errors="*{restHm4}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-1 position-relative">
+						<label for="delete-input-btn" class="form-label text-danger fs-5 position-absolute top-50 p-1">
+							<i class="bi bi-dash-circle"></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="input-form5" class="col-12 defoult-none-input-form">
+				<div class="row">
+					<div class="col-5">
+						<label class="form-label">名前</label>
+						<input  th:field="*{name5}" th:errorclass="is-invalid" type="text" class="input5 form-control" maxlength="20">
+						<div th:errors="*{name5}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">始業時間</label>
+						<input th:field="*{startHm5}" th:errorclass="is-invalid" type="time" class="input5 form-control">
+						<div th:errors="*{startHm5}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm5}" th:errorclass="is-invalid" type="time" class="input5 form-control">
+						<div th:errors="*{endHm5}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">休憩時間</label>
+						<input th:field="*{restHm5}" th:errorclass="is-invalid" type="time" class="input5 form-control">
+						<div th:errors="*{restHm5}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-1 position-relative">
+						<label for="delete-input-btn" class="form-label text-danger fs-5 position-absolute top-50 p-1">
+							<i class="bi bi-dash-circle"></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="input-form6" class="col-12 defoult-none-input-form">
+				<div class="row">
+					<div class="col-5">
+						<label class="form-label">名前</label>
+						<input th:field="*{name6}" th:errorclass="is-invalid" type="text" class="input6 form-control" maxlength="20">
+						<div th:errors="*{name6}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">始業時間</label>
+						<input th:field="*{startHm6}" th:errorclass="is-invalid" type="time" class="input6 form-control">
+						<div th:errors="*{startHm6}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm6}" th:errorclass="is-invalid" type="time" class="input6 form-control">
+						<div th:errors="*{endHm6}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">休憩時間</label>
+						<input th:field="*{restHm6}" th:errorclass="is-invalid" type="time" class="input6 form-control">
+						<div th:errors="*{restHm6}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-1 position-relative">
+						<label for="delete-input-btn" class="form-label text-danger fs-5 position-absolute top-50 p-1">
+							<i class="bi bi-dash-circle"></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div id="input-form7" class="col-12 defoult-none-input-form">
+				<div class="row">
+					<div class="col-5">
+						<label class="form-label">名前</label>
+						<input th:field="*{name7}" th:errorclass="is-invalid" type="text" class="input7 form-control" maxlength="20">
+						<div th:errors="*{name7}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">始業時間</label>
+						<input th:field="*{startHm7}" th:errorclass="is-invalid" type="time" class="input7 form-control">
+						<div th:errors="*{startHm7}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label for="inputAddress" class="form-label">終業時間</label>
+						<input th:field="*{endHm7}" th:errorclass="is-invalid" type="time" class="input7 form-control">
+						<div th:errors="*{endHm7}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-2">
+						<label class="form-label">休憩時間</label>
+						<input th:field="*{restHm7}" th:errorclass="is-invalid" type="time" class="input7 form-control">
+						<div th:errors="*{restHm7}" class="invalid-feedback"></div>
+					</div>
+					<div class="col-1 position-relative">
+						<label for="delete-input-btn" class="form-label text-danger fs-5 position-absolute top-50 p-1">
+							<i class="bi bi-dash-circle"></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<h3 class="text-center">
+				<label for="add-input-btn" id="add-input-label">
+					<i class="bi bi-plus-circle"></i>
+				</label>
+				<button type="button" id="add-input-btn" class="d-none"></button>
+			</h3>
+			<button type="button" id="delete-input-btn" class="d-none"></button>
+			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+				<input th:field="*{nowYm}" th:value="${nowYm}" type="hidden">
+				<button type="submit" class="btn btn-primary">修正</button>
+			</div>
+		</form>
+	</div>
+	<div th:if="${isModalResult}" th:insert="common/modal-result"></div>
+</body>
+</html>
