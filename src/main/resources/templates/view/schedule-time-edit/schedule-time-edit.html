@@ -14,7 +14,7 @@
 <body>
 	<div th:insert="common/header"></div>
 	<div class="container">
-		<h2 th:text="${year} + '年' + ${month} + '月 勤務時間'"></h2>
+		<h2 th:text="${year} + '年' + ${month} + ' 月 勤務時間'"></h2>
 		<div class="select-month-wrap">
 			<a class="btn btn-success" th:href="'/shift-edit?ym=' + ${beforeYm}"><i class="bi bi-caret-left"></i> 前月</a>
 			<a class="btn btn-success" th:href="'/shift-edit?ym=' + ${afterYm}"> 翌月 <i class="bi bi-caret-right"></i></a>
